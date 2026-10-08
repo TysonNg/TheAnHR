@@ -24,7 +24,7 @@ const previews=new Map<string,{pdf:Buffer;docx:Buffer;createdAt:number}>();
 const uuid=z.string().uuid();
 const nativeMimes:Record<string,string>={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.ico':'image/x-icon'};
 const rendererDirectory=resolve(__dirname,'../renderer');
-const contentSecurityPolicy="default-src 'self' thean:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' thean: data: blob:; frame-src 'self' thean: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'";
+const contentSecurityPolicy="default-src 'self' thean:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' thean: data: blob:; frame-src 'self' thean: blob:; connect-src 'self' thean: blob:; object-src 'none'; base-uri 'self'";
 function errorMessage(error:unknown):string{
  if(error instanceof z.ZodError)return error.issues.map(i=>i.message).join('\n');
  return error instanceof Error?error.message:String(error);
@@ -65,6 +65,7 @@ function setupApi(){
   return store.importAsset(kind,data,z.string().max(255).parse(filename));
  });
  register('assets:get',(id:string)=>store.getAsset(uuid.parse(id)));
+ register('assets:read',(id:string)=>{const asset=store.readAsset(uuid.parse(id));return {data:new Uint8Array(asset.data),mime:asset.mime};});
  register('settings:get',()=>store.getSettings());
  register('settings:save',(settings:CompanySettings)=>store.saveSettings(settings));
  register('ocr:recognize',async(ids:string[])=>{

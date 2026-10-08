@@ -40,3 +40,13 @@ it('revokes the temporary source blob URL on editor close',async()=>{
  await waitFor(()=>expect(screen.getByRole('button',{name:'Xoay 90°'})).toBeEnabled());view.unmount();
  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:editor-source');
 });
+it('reads image bytes via IPC assets:read and renders coordinate placeholders',async()=>{
+ const readAsset=vi.fn(async()=>({data:new Uint8Array([1,2,3]),mime:'image/jpeg'}));
+ window.thean={assets:{import:imported,read:readAsset}} as unknown as typeof window.thean;
+ render(<ImageEditor asset={asset} kind="idFront" notify={vi.fn()} onClose={vi.fn()} onSave={vi.fn()}/>);
+ await waitFor(()=>expect(readAsset).toHaveBeenCalledWith(asset.id));
+ expect(screen.getByLabelText('Vị trí ngang')).toHaveAttribute('placeholder','0');
+ expect(screen.getByLabelText('Vị trí dọc')).toHaveAttribute('placeholder','0');
+ expect(screen.getByLabelText('Chiều rộng')).toHaveAttribute('placeholder','px');
+ expect(screen.getByLabelText('Chiều cao')).toHaveAttribute('placeholder','px');
+});

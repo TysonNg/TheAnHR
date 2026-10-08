@@ -30,7 +30,7 @@ export interface TheAnAPI {
  employees: { list(filter?: EmployeeFilter): Promise<Employee[]>; save(input: EmployeeInput): Promise<Employee>;
  archive(id: string, archived: boolean): Promise<void>; history(id: string): Promise<Assignment[]>;
  transfer(id: string, projectId: string, date: string): Promise<void>; };
- assets: { import(kind: AssetKind, data: Uint8Array, filename: string): Promise<Asset>; get(id: string): Promise<Asset | null>; };
+ assets: { import(kind: AssetKind, data: Uint8Array, filename: string): Promise<Asset>; get(id: string): Promise<Asset | null>; read(id: string): Promise<{ data: Uint8Array; mime: string }>; };
  ocr: { recognize(assetIds: string[]): Promise<OcrResult>; onProgress(callback: (progress: OcrProgress) => void): () => void; };
  settings: { get(): Promise<CompanySettings>; save(settings: CompanySettings): Promise<CompanySettings>; };
  exports: { preview(request: ExportRequest): Promise<ExportPreview>; save(token: string, format: 'docx' | 'pdf' | 'both'): Promise<string[]>; };

@@ -4,7 +4,7 @@ const invoke=(channel:string,...args:unknown[])=>ipcRenderer.invoke(channel,...a
 const api:TheAnAPI={
  projects:{list:(archived=false)=>invoke('projects:list',archived),save:input=>invoke('projects:save',input),archive:id=>invoke('projects:archive',id)},
  employees:{list:(filter={})=>invoke('employees:list',filter),save:input=>invoke('employees:save',input),archive:(id,archived)=>invoke('employees:archive',id,archived),history:id=>invoke('employees:history',id),transfer:(id,project,date)=>invoke('employees:transfer',id,project,date)},
- assets:{import:(kind,data,name)=>invoke('assets:import',kind,data,name),get:id=>invoke('assets:get',id)},
+ assets:{import:(kind,data,name)=>invoke('assets:import',kind,data,name),get:id=>invoke('assets:get',id),read:id=>invoke('assets:read',id)},
  ocr:{recognize:ids=>invoke('ocr:recognize',ids),onProgress:callback=>{
   const handler=(_event:unknown,progress:OcrProgress)=>callback(progress);ipcRenderer.on('ocr:progress',handler);return()=>ipcRenderer.removeListener('ocr:progress',handler);
  }},
