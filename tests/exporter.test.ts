@@ -284,4 +284,35 @@ describe('report exporter', () => {
     expect(reportWarnings([employee('complete', { portraitId: 'present' })])).toEqual([]);
     expect(reportWarnings([])).toEqual([]);
   });
+
+  it('renders multi-page report with repeated table headers and intact images across multiple pages', async () => {
+    const portraitData = pixel(45, 67, 89, 100, 120);
+    const manyEmployees = Array.from({ length: 15 }, (_, i) =>
+      employee(`emp-${i + 1}`, {
+        fullName: `Nhân viên nhiều trang ${i + 1}`,
+        portraitId: `portrait-${i + 1}`,
+      })
+    );
+    const assets = Object.fromEntries(
+      manyEmployees.map(e => [e.portraitId!, { data: portraitData, mime: 'image/png' }])
+    );
+    const input = snapshot({ employees: manyEmployees, assets });
+    const html = buildReportHtml(input);
+    expect(html).toContain('thead { display: table-header-group; }');
+    expect(html).toContain('tr { break-inside: avoid; page-break-inside: avoid; }');
+    const doc = new JSDOM(html).window.document;
+    const images = doc.querySelectorAll('tbody img');
+    expect(images).toHaveLength(15);
+    for (const img of images) {
+      expect((img as HTMLImageElement).getAttribute('src')).toMatch(/^data:image\/png;base64,/);
+    }
+
+    const { table } = await unpack(input);
+    const rows = word(table, 'tr');
+    expect(rows).toHaveLength(16); // 1 header + 15 data rows
+    expect(word(rows[0], 'tblHeader')).toHaveLength(1);
+    for (let i = 1; i <= 15; i++) {
+      expect(word(rows[i], 'cantSplit')).toHaveLength(1);
+    }
+  });
 });

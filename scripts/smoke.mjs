@@ -14,7 +14,8 @@ const launch=()=>electron.launch({executablePath:executable,args:packaged?[]:[ro
 let app;
 try{
  app=await launch();
- const page=await app.firstWindow();await page.emulateMedia({reducedMotion:'reduce'});page.on('pageerror',e=>console.error('Renderer error:',e.message));
+ const page=await app.firstWindow();await page.emulateMedia({reducedMotion:'reduce'});
+ page.on('pageerror',e=>console.error('Renderer error:',e.message));
  await page.getByRole('button',{name:'Thêm dự án',exact:true}).waitFor({timeout:30000});
  await expect(page.getByText('Chưa có dự án',{exact:true})).toBeVisible();
  const fixture=await page.evaluate(async()=>{
