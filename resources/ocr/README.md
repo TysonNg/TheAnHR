@@ -1,0 +1,1 @@
+Mô hình ngôn ngữ OCR được tải ở bước phát triển/đóng gói bằng npm run prepare:ocr và đưa vào resources bộ cài. Khi sử dụng ứng dụng không tải mô hình và không gửi ảnh ra Internet. Dữ liệu từ @tesseract.js-data/vie và eng v1.0.0 (Tesseract tessdata, Apache-2.0).
